@@ -63,7 +63,7 @@ while ((yow=readdir(ya))!=NULL){
         strcat(nama,baru);
         strcat(alamat,nama);
         rename(yow->d_name, alamat);
-        printf("bisa");
+        
 }
 }
 closedir(ya);
@@ -75,5 +75,51 @@ closedir(ya);
 }
 ```
 Penjelasan:
+```
+ya=opendir(".");
+yow=readdir(ya)
+```
+membuka folder dan membaca kontennya (yow)
+```
+if(strstr(yow->d_name, ".png")!=NULL)
+
+```
+mencari tahu jika terdapat string ".png" atau tidak pada nama file, jika terdapat, maka program dijalankan.
+```
+strcpy(nama, yow->d_name);           
+```
+menyalin nama file ke variabel "nama"
+```
+typenya = strrchr(nama,'.');
+```
+pointer "typenya menunjuk ke string yang dimulai oleh '.' pada string nama"
+```
+if(typenya != NULL){
+*typenya = '\0';
+}
+```
+jika typenya tidak NULL, maka dihilangkan.
+```
+strcat(alamat,"/home/cikei/modul2/gambar/");
+```
+membuat string alamat tujuan file dipindahkan
+```
+strcat(nama,baru);
+```
+menambahkan "_grey.png" pada nama file
+```
+strcat(alamat,nama);
+```
+menambahkan string "nama" (nama file) pada alamat tujuan
+```
+rename(yow->d_name, alamat);
+```
+mengubah nama sekaligus memindahkan file tersebut ke alamat tujuan dengan nama yang baru
+
+Kendala :
+Segmentation fault
+
+
+
 
 
