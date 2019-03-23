@@ -57,8 +57,8 @@ while((grp=getgrent())!=NULL){
         if(strcmp(lala,data)){
         i=0;
         while(*(grp->gr_mem+i)){
-                strcpy(lili,grp->gr_mem);
-                if(strcmp(lili,elen)==1){
+                strcpy(lala,grp->gr_mem);
+                if(strcmp(lala,data)==1){
                         anak=fork();
 
                         if(anak==0){
