@@ -2,55 +2,58 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <sys/wait.h>
 #include <stdlib.h>
 
 int main ()
 {      
         pid_t child_id, child_id2, child_id3;
+	int status;
 
         child_id = fork();
 	if(child_id == 0)
         {
-                char *argv[3] = "unzip","/home/ALIFI/2/campur2.zip", NULL];
-		execv("/bin/unzip", argv);
+		char *argv[5] = {"unzip","-n","campur2.zip","*.txt", NULL};
+		execv("/usr/bin/unzip", argv);
         }
 
-	child_id2 = fork();
-	if(child_id2 == 0)
+	child_id = fork();
+	if(child_id == 0)
 	{
-		char *argv2[3] = "touch", "/home/ALIFI/2/daftar.txt", NULL];
+		char *argv2[3] = {"touch", "daftar.txt", NULL};
 		execv("/bin/touch", argv2);
 	}
 	
-	int status;
-	DIR *ya;
-	char *typenya;
-	struct dirent *yow;
-	ya = opendir(".");
+	// bagian pipe disini
+	printf("kuy menunggu");
+	while(wait(&status)>0);
+	printf("selesai ea");
 
-	child_id3 = wait(&status);
-	if(child_id3 > 0)
+	int pipa[2];
+	pipe(pipa);
+	child_id3 = fork();
+
+	printf("pipe terbetuk");
+
+	if(child_id3 == 0)
 	{
-	   FILE *fp;
-	   fp = fopen("daftar.txt", "w");
-	   if(ya)
-		{
-		   while ((yow=readdir(ya)!=NULL)
-		   {
-		      if(strstr(yow->d_name, ".txt")!=NULL)
-		      {
-		         char *nama;
-			 strcpy(nama, yow->d_name);
-			 int i;
-			 for(i=0;i<strlen(nama); i++)
-			 {
-			    fputc(nama[i], fp);
-			 }
-		      }
-		   }
-		}
-	   fclose(fp);
+		close(pipa[0]);
+		dup2(pipa[1], 1);
+		char *argv3[3] = {"list", "campur2", NULL};
+		execv("/bin/ls", argv3);
+		printf("list selesai");
 	}
 	
-}
+	char temp[1000];
 
+	FILE *daftar = fopen("daftar.txt", "w");
+	FILE *isi_ls = fdopen(pipa[0], "r");
+
+	while(fgets(temp, sizeof(temp), isi_ls) != NULL)
+		{fprintf(daftar, "%s", temp);}
+	
+	printf("SUDAH TERTULIS");
+
+	fclose(daftar);
+
+}
