@@ -1,7 +1,7 @@
 # SoalShift_modul2_E02
 
 1.
-```
+``` c
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
@@ -181,5 +181,51 @@ int main ()
 
 }
 ```
+Langkah-langkah:
+1. Mengekstrak file `campur2.zip` yang bertipe teks (.txt)
+  ```c
+  	child_id = fork();
+	if(child_id == 0)
+        {
+		char *argv[5] = {"unzip","-n","campur2.zip","*.txt", NULL};
+		execv("/usr/bin/unzip", argv);
+        }
+```
+2. Membuat file `daftar.txt`
+   ```c
+     	child_id = fork();
+	if(child_id == 0)
+	{
+		char *argv2[3] = {"touch", "daftar.txt", NULL};
+		execv("/bin/touch", argv2);
+	}
+   ```
+ 3.Mendaftar nama file dalam folder `campur2` dan memasukannya ke dalam `daftar.txt` 
+ ```c
+ while(wait(&status)>0);
 
+	int pipa[2];
+	pipe(pipa);
+	child_id3 = fork();
 
+	if(child_id3 == 0)
+	{
+		close(pipa[0]);
+		dup2(pipa[1], 1);
+		char *argv3[3] = {"list", "campur2", NULL};
+		execv("/bin/ls", argv3);
+		printf("list selesai");
+	}
+	
+	char temp[1000];
+
+	FILE *daftar = fopen("daftar.txt", "w");
+	FILE *isi_ls = fdopen(pipa[0], "r");
+
+	while(fgets(temp, sizeof(temp), isi_ls) != NULL)
+		{fprintf(daftar, "%s", temp);}
+
+	fclose(daftar);
+ ```
+ 
+ Kendala: Tahap ketiga tidak berjalan.
